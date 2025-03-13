@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hotel Management Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- FontAwesome CDN -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- FontAwesome Latest CDN -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      background: #f1f5f9;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 270px;
+      min-width: 270px;
+      background: #ffffff;
+      color: #2563eb;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      border-right: 2px solid #e0e7ff;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .sidebar.collapsed {
+      width: 70px;
+      min-width: 70px;
+    }
+
+    .sidebar-header {
+      padding: 0 30px;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 30px;
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sidebar-header i {
+      font-size: 26px;
+      cursor: pointer;
+    }
+
+    .menu {
+      list-style: none;
+      padding: 0 20px;
+    }
+
+    .menu li {
+      margin: 12px 0;
+    }
+
+    .menu a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 18px;
+      color: #2563eb;
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .menu a i {
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+
+    .menu a:hover {
+      background: #3B82F6;
+      color: #ffffff;
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .menu a:hover i {
+      color: #ffffff;
+      transform: scale(1.1);
+    }
+
+    .feature-heading {
+      padding: 0 30px;
+      color: #6b7280;
+      font-size: 15px;
+      text-transform: uppercase;
+      margin: 30px 0 12px;
+    }
+
+    /* Sidebar Collapse */
+    .sidebar.collapsed .menu a span, 
+    .sidebar.collapsed .sidebar-header h2,
+    .sidebar.collapsed .feature-heading {
+      display: none;
+    }
+
+    .sidebar.collapsed .menu a {
+      justify-content: center;
+    }
+
+    /* Main area */
+    .main-area {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Topbar */
+    .topbar {
+      height: 70px;
+      background: #ffffff;
+      border-bottom: 2px solid #e0e7ff;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-info img {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #2563eb;
+    }
+
+    .user-info .details {
+      text-align: right;
+    }
+
+    .user-info .details h4 {
+      margin: 0;
+      font-size: 16px;
+      color: #1e293b;
+    }
+
+    .user-info .details span {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    /* Main content */
+    .main-content {
+      flex-grow: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+
+    .main-content h1 {
+      font-size: 32px;
+      color: #1e293b;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #3B82F6;
+      border-radius: 4px;
+    }
+
+    .heading{
+        font-size: 26px;
+    }
+    /* Active Menu Item */
+.menu a.active {
+  background: #3B82F6;
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+}
+
+.menu a.active i {
+  color: #ffffff;
+  transform: scale(1.1);
+}
+.sidebar ul li a.active {
+  background-color: #0284c7;
+  color: white;
+  font-weight: 500;
+}
+
+/* Left bar animation */
+.sidebar ul li a:not(.active)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 0;
+  height: 80%;
+  background: #0284c7;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* On hover left bar appears */
+.sidebar ul li a:not(.active):hover::before {
+  width: 4px;
+}
+
+/* Optional slight move right on hover */
+.sidebar ul li a:not(.active):hover {
+  padding-left: 24px;
+}
+
+/* Optional icon color change */
+.sidebar ul li a:not(.active):hover i {
+  color: #0f172a;
+  transition: color 0.3s ease;
+}
+
+.student-details-container {
+  max-width: 1000px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.student-details-container h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 28px;
+  color: #333;
+}
+
+.student-profile-card {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.student-photo-section img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #007bff;
+}
+
+.student-basic-info h3 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.student-basic-info p {
+  margin: 8px 0;
+  font-size: 16px;
+  color: #555;
+}
+
+.student-detail-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 20px;
+}
+
+.detail-box {
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.detail-box h4 {
+  margin-bottom: 15px;
+  font-size: 20px;
+  color: #007bff;
+}
+
+.detail-box p {
+  margin: 8px 0;
+  font-size: 15px;
+  color: #444;
+}
+
+.detail-box p strong {
+  color: #333;
+}
+.student-profile-container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #fdfdfd;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.student-profile-container h2 {
+  text-align: center;
+  font-size: 32px;
+  margin-bottom: 40px;
+  color: #333;
+  letter-spacing: 1px;
+  position: relative;
+}
+
+.student-profile-container h2::after {
+  content: '';
+  width: 80px;
+  height: 4px;
+  background: #007bff;
+  display: block;
+  margin: 10px auto 0;
+  border-radius: 5px;
+}
+
+.profile-header {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.profile-image img {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid #007bff;
+}
+
+.profile-details h3 {
+  margin: 0 0 10px;
+  font-size: 26px;
+  color: #222;
+}
+
+.profile-details p {
+  margin: 6px 0;
+  color: #555;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.profile-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 25px;
+}
+
+.info-card {
+  background: #f8f9fa;
+  padding: 22px;
+  border-radius: 15px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease-in-out;
+}
+
+.info-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.info-card h4 {
+  margin-bottom: 16px;
+  color: #007bff;
+  font-size: 20px;
+}
+
+.info-card p {
+  margin: 8px 0;
+  font-size: 15px;
+  color: #444;
+}
+
+.info-card p strong {
+  color: #333;
+  font-weight: 600;
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar Start -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2 class="heading">Hostel Manager</h2>
+      <!-- <i class="fa-solid fa-bars" onclick="toggleSidebar()"></i> -->
+    </div>
+
+    <ul class="menu">
+      <li><a href="studenthosteldashboard.html" ><i class="fa-solid fa-house-chimney"></i><span>Hostel Dashboard</span></a></li>
+    </ul>
+
+    <h3 class="feature-heading">Features</h3>
+    <ul class="menu">
+      <li><a href="myprofile.html" class="active"><i class="fa-solid fa-address-card"></i><span>View My Details</span></a></li>
+      <li><a href="bookhostel.html"><i class="fa-solid fa-bed"></i><span>Book Hostel</span></a></li>
+      <li><a href="myroomdetails.html" ><i class="fa-solid fa-door-open"></i><span>My Room Details</span></a></li>
+      <li><a href="paymentdetails.html"><i class="fa-solid fa-credit-card"></i><span>Payment Details</span></a></li>
+    </ul>
+  </div>
+  <!-- Sidebar End -->
+
+  <!-- Main Area (Topbar + Content) -->
+  <div class="main-area">
+    <!-- Topbar Start -->
+    <div class="topbar">
+      <div class="user-info">
+        <div class="details">
+          <h4>Varun</h4>
+          <span>Student</span>
+        </div>
+        <img src="img/images.jpg" alt="Profile">
+      </div>
+    </div>
+    <!-- Topbar End -->
+
+    <!-- Main Content Start -->
+    <div class="main-content">
+      <div class="student-profile-container">
+
+        <h2>Student Profile Overview</h2>
+      
+        <div class="profile-header">
+          <div class="profile-image">
+            <img src="img/images.jpg" alt="Student Photo">
+          </div>
+          <div class="profile-details">
+            <h3>Varun</h3>
+            <p><strong>Registration No:</strong> CA016</p>
+            <p><strong>Room No:</strong> 102-B (Single Seater)</p>
+            <p><strong>Staying From:</strong> Jan 2023</p>
+          </div>
+        </div>
+      
+        <div class="profile-info-grid">
+      
+          <div class="info-card">
+            <h4>Contact Information</h4>
+            <p><strong>Phone:</strong> +91 9876543210</p>
+            <p><strong>Emergency Contact:</strong> +91 9123456789</p>
+            <p><strong>Email:</strong> varun.sharma@email.com</p>
+          </div>
+      
+          <div class="info-card">
+            <h4>Address</h4>
+            <p><strong>Permanent:</strong> 123, Green Park, New Delhi</p>
+            <p><strong>Current:</strong> Hostel Block A, Room 102-B</p>
+          </div>
+      
+          <div class="info-card">
+            <h4>Guardian Details</h4>
+            <p><strong>Name:</strong> Mr. Rajesh Sharma</p>
+            <p><strong>Relation:</strong> Father</p>
+            <p><strong>Contact:</strong> +91 9988776655</p>
+          </div>
+      
+          <div class="info-card">
+            <h4>Hostel & Fees</h4>
+            <p><strong>Seater:</strong> 1 Seater</p>
+            <p><strong>Fees Due:</strong> ₹7,500</p>
+            <p><strong>Status:</strong> Active</p>
+          </div>
+
+          <div class="info-card">
+            <h4>Health & Medical Info</h4>
+            <p><strong>Blood Group:</strong> B+ve</p>
+            <p><strong>Medical Conditions:</strong> None</p>
+            <p><strong>Emergency Allergies:</strong> No known allergies</p>
+          </div>
+          <div class="info-card">
+            <h4>Hostel Stay & ID Info</h4>
+            <p><strong>Hostel ID:</strong> HST-98231</p>
+            <p><strong>Joining Date:</strong> 10th Jan 2023</p>
+            <p><strong>Hostel Block:</strong> A Block</p>
+          </div>
+          
+      
+        </div>
+      </div>
+      
+    <!-- Main Content End -->
+  </div>
+
+  <!-- JavaScript for Sidebar -->
+  <script>
+    // function toggleSidebar() {
+    //   const sidebar = document.getElementById('sidebar');
+    //   sidebar.classList.toggle('collapsed');
+    // }
+  </script>
+
+</body>
+</html>

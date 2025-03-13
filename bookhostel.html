@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hotel Management Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- FontAwesome CDN -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- FontAwesome Latest CDN -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      background: #f1f5f9;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 270px;
+      min-width: 270px;
+      background: #ffffff;
+      color: #2563eb;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      border-right: 2px solid #e0e7ff;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .sidebar.collapsed {
+      width: 70px;
+      min-width: 70px;
+    }
+
+    .sidebar-header {
+      padding: 0 30px;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 30px;
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sidebar-header i {
+      font-size: 26px;
+      cursor: pointer;
+    }
+
+    .menu {
+      list-style: none;
+      padding: 0 20px;
+    }
+
+    .menu li {
+      margin: 12px 0;
+    }
+
+    .menu a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 18px;
+      color: #2563eb;
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .menu a i {
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+
+    .menu a:hover {
+      background: #3B82F6;
+      color: #ffffff;
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .menu a:hover i {
+      color: #ffffff;
+      transform: scale(1.1);
+    }
+
+    .feature-heading {
+      padding: 0 30px;
+      color: #6b7280;
+      font-size: 15px;
+      text-transform: uppercase;
+      margin: 30px 0 12px;
+    }
+
+    /* Sidebar Collapse */
+    .sidebar.collapsed .menu a span, 
+    .sidebar.collapsed .sidebar-header h2,
+    .sidebar.collapsed .feature-heading {
+      display: none;
+    }
+
+    .sidebar.collapsed .menu a {
+      justify-content: center;
+    }
+
+    /* Main area */
+    .main-area {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Topbar */
+    .topbar {
+      height: 70px;
+      background: #ffffff;
+      border-bottom: 2px solid #e0e7ff;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-info img {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #2563eb;
+    }
+
+    .user-info .details {
+      text-align: right;
+    }
+
+    .user-info .details h4 {
+      margin: 0;
+      font-size: 16px;
+      color: #1e293b;
+    }
+
+    .user-info .details span {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    /* Main content */
+    .main-content {
+      flex-grow: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+
+    .main-content h1 {
+      font-size: 32px;
+      color: #1e293b;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #3B82F6;
+      border-radius: 4px;
+    }
+
+    .heading{
+        font-size: 26px;
+    }
+    /* Active Menu Item */
+.menu a.active {
+  background: #3B82F6;
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+}
+
+.menu a.active i {
+  color: #ffffff;
+  transform: scale(1.1);
+}
+.sidebar ul li a.active {
+  background-color: #0284c7;
+  color: white;
+  font-weight: 500;
+}
+
+/* Left bar animation */
+.sidebar ul li a:not(.active)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 0;
+  height: 80%;
+  background: #0284c7;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* On hover left bar appears */
+.sidebar ul li a:not(.active):hover::before {
+  width: 4px;
+}
+
+/* Optional slight move right on hover */
+.sidebar ul li a:not(.active):hover {
+  padding-left: 24px;
+}
+
+/* Optional icon color change */
+.sidebar ul li a:not(.active):hover i {
+  color: #0f172a;
+  transition: color 0.3s ease;
+}
+
+
+body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      /* padding: 30px; */
+    }
+
+    h1 {
+      text-align: left;
+      color: #333;
+      margin-bottom: 20px;
+      padding-left: 10px;
+      border-left: 5px solid #3b82f6;
+    }
+
+    .form-container {
+      max-width: 1100px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      position: relative;
+      right:25px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      margin-bottom: 6px;
+      color: #555;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select {
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: #3b82f6;
+    }
+
+    .form-group .radio-group {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 10px;
+    }
+
+    .form-group .radio-group label {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      color: white;
+      transition: background 0.3s ease;
+    }
+
+    .register-btn {
+      background: #3b82f6;
+    }
+
+    .register-btn:hover {
+      background: #2563eb;
+    }
+
+    .reset-btn {
+      background: #ef4444;
+    }
+
+    .reset-btn:hover {
+      background: #dc2626;
+    }
+
+
+    .student-form-container {
+  background: white;
+  padding: 20px;
+  margin-bottom: 30px;
+  max-width: 1100px;
+  margin-left: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.student-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.student-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.student-form-group label {
+  
+  margin-bottom: 6px;
+  color: #555;
+  color: #555;
+      font-weight: 500;
+}
+
+.student-form-group input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  /* background: #f5f5f5; */
+  
+   
+}
+
+
+
+.hi{
+  margin-top: 60px;
+}
+
+.student-form-group input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  /* background: #f5f5f5; */
+  color: #333;
+  outline: none; /* to remove default blue outline */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Focus effect */
+.student-form-group input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 5px rgba(59, 130, 246, 0.5); /* Optional for nice glow */
+  background: #fff; /* Optional: white background on focus */
+}
+
+
+.gender-select{
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  /* background: #f5f5f5; */
+  color: #333;
+  outline: none; /* to remove default blue outline */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.gender-select:focus{
+  border-color: #3b82f6;
+  box-shadow: 0 0 5px rgba(59, 130, 246, 0.5); /* Optional for nice glow */
+  background: #fff; /* Optional: white background on focus */
+}
+
+
+.guardian-form-container {
+  background: white;
+  padding: 20px;
+  margin-bottom: 30px;
+  /* margin: auto; */
+  max-width: 1100px;
+  margin-left: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.guardian-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.guardian-form-group label {
+  display: block;
+  margin-bottom: 6px;
+  
+      color: #555;
+      font-weight: 500;
+}
+
+.guardian-form-group input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  /* background: #f5f5f5; */
+  color: #333;
+  outline: none; /* to remove default blue outline */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+/* Focus effect */
+.guardian-form-group input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+  background: #fff;
+}
+
+.guardian-heading{
+  margin-top: 60px;
+}
+/* Address form container */
+.current-address-form-container,
+.permanent-address-form-container {
+  background: white;
+  padding: 20px;
+  margin-bottom: 30px;
+  /* margin: auto; */
+  max-width: 1100px;
+  margin-left: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Grid layout */
+.current-address-form-grid,
+.permanent-address-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+/* Form group */
+.current-address-form-group label,
+.permanent-address-form-group label {
+  display: block;
+  
+  margin-bottom: 6px;
+  color: #555;
+  color: #555;
+      font-weight: 500;
+}
+
+/* Inputs */
+.current-address-form-group input,
+.permanent-address-form-group input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  /* background: #f5f5f5; */
+  color: #333;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Focus effect */
+.current-address-form-group input:focus,
+.permanent-address-form-group input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+  background: #fff;
+}
+
+/* Checkbox Container */
+.address-checkbox-container {
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Checkbox and label */
+.address-checkbox-label {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  user-select: none;
+  font-size: 15px;
+}
+
+/* Style checkbox */
+.address-checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  accent-color: #3b82f6; /* Modern blue color */
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* On hover, make text blue */
+.address-checkbox-label:hover span {
+  color: #3b82f6;
+  transition: color 0.3s ease;
+}
+.form-note {
+  margin-top: 25px;
+  padding: 12px 18px;
+  background: #f0f8ff; /* Light bluish background */
+  border-left: 4px solid #3b82f6; /* Blue left border */
+  border-radius: 8px;
+  font-size: 14px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.form-note i {
+  color: #3b82f6;
+  font-size: 18px;
+}
+
+.form-note span {
+  font-weight: 600;
+  color: #e63946; /* Slight red for emphasis */
+}
+
+.form-button-group {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  gap: 20px; /* Space between buttons */
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+/* Style for Book Now button */
+
+
+.register-btn {
+      background: #3b82f6;
+    }
+
+    .register-btn:hover {
+      background: #2563eb;
+    }
+
+    .reset-btn {
+      background: #ef4444;
+    }
+
+    .reset-btn:hover {
+      background: #dc2626;
+    }
+    .form-button-group {
+  display: flex;
+  justify-content: center; /* Center align */
+  gap: 20px; /* Space between buttons */
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+/* Book Now Button */
+.register-btn {
+  padding: 12px 30px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.register-btn:hover {
+  background: #2563eb;
+  transform: translateY(-2px); /* subtle lift effect */
+}
+
+/* Reset Button */
+.reset-btn {
+  padding: 12px 30px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.reset-btn:hover {
+  background: #dc2626;
+  transform: translateY(-2px); /* subtle lift effect */
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar Start -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2 class="heading">Hostel Manager</h2>
+      <!-- <i class="fa-solid fa-bars" onclick="toggleSidebar()"></i> -->
+    </div>
+
+    <ul class="menu">
+      <li><a href="studenthosteldashboard.html"  ><i class="fa-solid fa-house-chimney"></i><span>Hostel Dashboard</span></a></li>
+    </ul>
+
+    <h3 class="feature-heading">Features</h3>
+    <ul class="menu">
+      <li><a href="myprofile.html" ><i class="fa-solid fa-address-card"></i><span>View My Details</span></a></li>
+      <li><a href="bookhostel.html" class="active"><i class="fa-solid fa-bed"></i><span>Book Hostel</span></a></li>
+      <li><a href="myroomdetails.html"><i class="fa-solid fa-door-open"></i><span>My Room Details</span></a></li>
+      <li><a href="paymentdetails.html"><i class="fa-solid fa-credit-card"></i><span>Payment Details</span></a></li>
+    </ul>
+  </div>
+  <!-- Sidebar End -->
+
+  <!-- Main Area (Topbar + Content) -->
+  <div class="main-area">
+    <!-- Topbar Start -->
+    <div class="topbar">
+      <div class="user-info">
+        <div class="details">
+          <h4>Varun</h4>
+          <span>Student</span>
+        </div>
+        <img src="img/images.jpg" alt="Profile">
+      </div>
+    </div>
+    <!-- Topbar End -->
+
+    <!-- Main Content Start -->
+    <div class="main-content">
+
+   
+ 
+      <h1><i class="fa-solid fa-bed" style="margin-right: 10px; color: #3b82f6;"></i>Hostel Booking Form</h1>
+  
+      <div class="form-container">
+        <form>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="roomNumber">Room Number (Seater)</label>
+              <select id="roomNumber" onchange="updateSeaterAndFees()">
+                <option value="">Select...</option>
+              </select>
+            </div>
+    
+            <div class="form-group">
+              <label for="startDate">Start Date</label>
+              <input type="date" id="startDate">
+            </div>
+    
+            <div class="form-group">
+              <label for="seater">Seater</label>
+              <input type="number" id="seater" readonly>
+            </div>
+    
+            <div class="form-group">
+              <label>Food Status</label>
+              <div class="radio-group">
+                <label><input type="radio" name="foodStatus" value="Required" onchange="updateSeaterAndFees()"> Required <span style="color: red;">(Extra ₹690/month)</span></label>
+                <label><input type="radio" name="foodStatus" value="Not Required" checked onchange="updateSeaterAndFees()"> Not Required</label>
+              </div>
+            </div>
+    
+            <div class="form-group">
+              <label for="fees">Total Fees Per Month</label>
+              <input type="text" id="fees" readonly>
+            </div>
+    
+            <!-- <div class="form-group">
+              <label for="totalAmount">Total Amount</label>
+              <input type="text" id="totalAmount" readonly>
+            </div> -->
+    
+            <div class="form-group">
+              <label for="duration">Duration (Months)</label>
+              <input type="number" id="duration" placeholder="Duration of stay in months" onchange="updateTotalAmount()">
+            </div>
+  <!--   
+            <div class="form-group">
+              <label for="advancePayment">Advance Payment</label>
+              <input type="number" id="advancePayment" placeholder="Advance payment amount" onchange="updateTotalAmount()">
+            </div> -->
+          </div>
+    
+          <!-- <div class="button-group">
+            <button type="submit" class="register-btn">Book Now</button>
+            <button type="reset" class="reset-btn">Reset</button>
+          </div> -->
+        </form>
+      </div>
+  
+      <h1 class="hi"><i class="fa-solid fa-user" style="margin-right: 10px; color: #3b82f6;"></i>Student's Personal Information</h1>
+      <div class="student-form-container">
+        <form>
+          <div class="student-form-grid">
+            
+            <div class="student-form-group">
+              <label>Registration Number</label>
+              <input type="text" placeholder="Enter Registration Number">
+            </div>
+      
+            <div class="student-form-group">
+              <label>First Name</label>
+              <input type="text" placeholder="Enter First Name" >
+            </div>
+      
+            <div class="student-form-group">
+              <label>Middle Name</label>
+              <input type="text" placeholder="Enter Middle Name" >
+            </div>
+      
+            <div class="student-form-group">
+              <label>Last Name</label>
+              <input type="text" placeholder="Enter Last Name" >
+            </div>
+      
+            <div class="student-form-group">
+              <label>Email</label>
+              <input type="email" placeholder="Enter Email" >
+            </div>
+      
+            <div class="student-form-group ">
+              <label>Gender</label>
+              <select class="gender-select">
+                <option value="">Select Gender</option>
+                <option value="Male" selected>Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+      
+            <div class="student-form-group">
+              <label>Contact Number</label>
+              <input type="text" placeholder="Enter Contact Number" >
+            </div>
+      
+            <div class="student-form-group">
+              <label>Emergency Contact Number</label>
+              <input type="number" placeholder="Enter Emergency Contact Number" >
+            </div>
+      
+            <!-- Uncomment if needed -->
+            <!-- 
+            <div class="student-form-group">
+              <label>Preferred Course</label>
+              <input type="text" placeholder="Enter Preferred Course">
+            </div> 
+            -->
+      
+          </div>
+        </form>
+      </div>
+  
+       <h1 class="guardian-heading"><i class="fa-solid fa-user-shield" style="margin-right: 8px; color: #3b82f6;"></i></i>Guardian's Information</h1>
+  
+      <div class="guardian-form-container">
+       
+        <form>
+          <div class="guardian-form-grid">
+            
+            <div class="guardian-form-group">
+              <label>Guardian's Name</label>
+              <input type="text" placeholder="Enter Guardian's Full Name">
+            </div>
+      
+            <div class="guardian-form-group">
+              <label>Relationship</label>
+              <input type="text" placeholder="Enter Relationship" >
+            </div>
+      
+            <div class="guardian-form-group">
+              <label>Contact Number</label>
+              <input type="text" placeholder="Enter Contact Number">
+            </div>
+      
+            <div class="guardian-form-group">
+              <label>Alternate Contact Number</label>
+              <input type="text" placeholder="Enter Alternate Contact Number" >
+            </div>
+      
+            <div class="guardian-form-group">
+              <label>Email</label>
+              <input type="email" placeholder="Enter Email" >
+            </div>
+      
+            <div class="guardian-form-group">
+              <label>Address</label>
+              <input type="text" placeholder="Enter Full Address" >
+            </div>
+      
+            <div class="guardian-form-group">
+              <label>Occupation</label>
+              <input type="text" placeholder="Enter Occupation">
+            </div>
+      
+          </div>
+        </form>
+      </div>
+      <h1 class="guardian-heading"> <i class="fa-solid fa-location-dot" style="margin-right: 8px; color: #3b82f6;"></i>Current Address Information</h1>
+      <div class="current-address-form-container">
+        
+        <form>
+          <div class="current-address-form-grid">
+            
+            <div class="current-address-form-group">
+              <label>House Number / Flat Number</label>
+              <input type="text" id="current-house" placeholder="Enter House/Flat Number">
+            </div>
+      
+            <div class="current-address-form-group">
+              <label>Street / Area</label>
+              <input type="text" id="current-street" placeholder="Enter Street/Area">
+            </div>
+      
+            <div class="current-address-form-group">
+              <label>City</label>
+              <input type="text" id="current-city" placeholder="Enter City">
+            </div>
+      
+            <div class="current-address-form-group">
+              <label>State</label>
+              <input type="text" id="current-state" placeholder="Enter State">
+            </div>
+      
+            <div class="current-address-form-group">
+              <label>Pin Code</label>
+              <input type="text" id="current-pin" placeholder="Enter Pin Code">
+            </div>
+      
+            <div class="current-address-form-group">
+              <label>Country</label>
+              <input type="text" id="current-country" placeholder="Enter Country">
+            </div>
+      
+          </div>
+        </form>
+      </div>
+  
+      
+      <h1 class="guardian-heading"> <i class="fa-solid fa-house" style="margin-right: 8px; color: #3b82f6;"></i> Permanent Address Information</h1>
+      <div class="permanent-address-form-container">
+        
+        <form>
+          <div class="permanent-address-form-grid">
+      
+            <div class="permanent-address-form-group">
+              <label>House Number / Flat Number</label>
+              <input type="text" id="permanent-house" placeholder="Enter House/Flat Number">
+            </div>
+      
+            <div class="permanent-address-form-group">
+              <label>Street / Area</label>
+              <input type="text" id="permanent-street" placeholder="Enter Street/Area">
+            </div>
+      
+            <div class="permanent-address-form-group">
+              <label>City</label>
+              <input type="text" id="permanent-city" placeholder="Enter City">
+            </div>
+      
+            <div class="permanent-address-form-group">
+              <label>State</label>
+              <input type="text" id="permanent-state" placeholder="Enter State">
+            </div>
+      
+            <div class="permanent-address-form-group">
+              <label>Pin Code</label>
+              <input type="text" id="permanent-pin" placeholder="Enter Pin Code">
+            </div>
+      
+            <div class="permanent-address-form-group">
+              <label>Country</label>
+              <input type="text" id="permanent-country" placeholder="Enter Country">
+            </div>
+          </div>
+          <div class="address-checkbox-container">
+            <label class="address-checkbox-label">
+              <input type="checkbox" id="same-address" onchange="copyCurrentToPermanent()"> 
+              <span>Set Permanent Address same as Current Address</span>
+            </label>
+          </div>
+        </form>
+      </div>
+      <div class="form-note">
+        <i class="fa-solid fa-circle-info"></i> 
+        Please make sure all fields are filled correctly. <span>All fields are mandatory.</span>
+      </div>
+      <div class="form-button-group">
+        <button type="submit" class="register-btn">Book Now</button>
+        <button type="reset" class="reset-btn">Reset</button>
+      </div>
+      
+    </div>
+    <!-- Main Content End -->
+  </div>
+
+  <!-- JavaScript for Sidebar -->
+  <script>
+   const rooms = {
+  101: { seater: 4, basePrice: 3000 },  // 4 seater, low price
+  102: { seater: 3, basePrice: 3500 },  // 3 seater, little higher
+  201: { seater: 2, basePrice: 4000 },  // 2 seater, more privacy
+  202: { seater: 1, basePrice: 5000 },  // 1 seater, premium
+
+  301: { seater: 4, basePrice: 3100 },  // Same as 101 with slight variation
+  302: { seater: 3, basePrice: 3600 },  // Same as 102 with variation
+  401: { seater: 2, basePrice: 4100 },  // Same as 201 with variation
+  402: { seater: 1, basePrice: 5200 }   // Most premium single room
+    };
+
+    const foodPrice = 690; // Per month food price
+
+    const roomSelect = document.getElementById('roomNumber');
+    const seaterInput = document.getElementById('seater');
+    const feesInput = document.getElementById('fees');
+    const totalAmountInput = document.getElementById('totalAmount');
+    const durationInput = document.getElementById('duration');
+    const advanceInput = document.getElementById('advancePayment');
+
+    // Populate dropdown with room and seater info
+    for (const room in rooms) {
+      const option = document.createElement('option');
+      option.value = room;
+      option.textContent = `Room ${room} (${rooms[room].seater} Seater)`;
+      roomSelect.appendChild(option);
+    }
+
+    // Update Seater and Fee
+    function updateSeaterAndFees() {
+      const selectedRoom = roomSelect.value;
+      if (selectedRoom) {
+        const roomData = rooms[selectedRoom];
+        seaterInput.value = roomData.seater;
+
+        let totalFee = roomData.basePrice;
+
+        // Add food price if required
+        const foodStatus = document.querySelector('input[name="foodStatus"]:checked').value;
+        if (foodStatus === "Required") {
+          totalFee += foodPrice;
+        }
+
+        feesInput.value = `₹${totalFee}/month`;
+
+        // Update total amount
+        updateTotalAmount(totalFee);
+      } else {
+        seaterInput.value = '';
+        feesInput.value = '';
+        totalAmountInput.value = '';
+      }
+    }
+
+    // Update Total Amount based on duration and advance
+    function updateTotalAmount(monthlyFee = 0) {
+      if (!monthlyFee) {
+        const feeText = feesInput.value.replace(/[^\d]/g, '');
+        monthlyFee = parseInt(feeText) || 0;
+      }
+
+      const duration = parseInt(durationInput.value) || 0;
+      const advance = parseInt(advanceInput.value) || 0;
+
+      let total = (monthlyFee * duration) + advance;
+      totalAmountInput.value = total ? `₹${total}` : '';
+    }
+
+
+    function copyCurrentToPermanent() {
+  const isChecked = document.getElementById('same-address').checked;
+
+  const fields = ['house', 'street', 'city', 'state', 'pin', 'country'];
+
+  fields.forEach(field => {
+    const current = document.getElementById(`current-${field}`);
+    const permanent = document.getElementById(`permanent-${field}`);
+    if (isChecked) {
+      permanent.value = current.value;
+    } else {
+      permanent.value = ''; // Clear fields if unchecked
+    }
+  });
+}
+
+  </script>
+
+</body>
+</html>

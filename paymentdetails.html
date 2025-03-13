@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hotel Management Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- FontAwesome CDN -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- FontAwesome Latest CDN -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      background: #f1f5f9;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 270px;
+      min-width: 270px;
+      background: #ffffff;
+      color: #2563eb;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      border-right: 2px solid #e0e7ff;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .sidebar.collapsed {
+      width: 70px;
+      min-width: 70px;
+    }
+
+    .sidebar-header {
+      padding: 0 30px;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 30px;
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sidebar-header i {
+      font-size: 26px;
+      cursor: pointer;
+    }
+
+    .menu {
+      list-style: none;
+      padding: 0 20px;
+    }
+
+    .menu li {
+      margin: 12px 0;
+    }
+
+    .menu a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 18px;
+      color: #2563eb;
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .menu a i {
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+
+    .menu a:hover {
+      background: #3B82F6;
+      color: #ffffff;
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .menu a:hover i {
+      color: #ffffff;
+      transform: scale(1.1);
+    }
+
+    .feature-heading {
+      padding: 0 30px;
+      color: #6b7280;
+      font-size: 15px;
+      text-transform: uppercase;
+      margin: 30px 0 12px;
+    }
+
+    /* Sidebar Collapse */
+    .sidebar.collapsed .menu a span, 
+    .sidebar.collapsed .sidebar-header h2,
+    .sidebar.collapsed .feature-heading {
+      display: none;
+    }
+
+    .sidebar.collapsed .menu a {
+      justify-content: center;
+    }
+
+    /* Main area */
+    .main-area {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Topbar */
+    .topbar {
+      height: 70px;
+      background: #ffffff;
+      border-bottom: 2px solid #e0e7ff;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-info img {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #2563eb;
+    }
+
+    .user-info .details {
+      text-align: right;
+    }
+
+    .user-info .details h4 {
+      margin: 0;
+      font-size: 16px;
+      color: #1e293b;
+    }
+
+    .user-info .details span {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    /* Main content */
+    .main-content {
+      flex-grow: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+
+    .main-content h1 {
+      font-size: 32px;
+      color: #1e293b;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #3B82F6;
+      border-radius: 4px;
+    }
+
+    .heading{
+        font-size: 26px;
+    }
+    /* Active Menu Item */
+.menu a.active {
+  background: #3B82F6;
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+}
+
+.menu a.active i {
+  color: #ffffff;
+  transform: scale(1.1);
+}
+.sidebar ul li a.active {
+  background-color: #0284c7;
+  color: white;
+  font-weight: 500;
+}
+
+/* Left bar animation */
+.sidebar ul li a:not(.active)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 0;
+  height: 80%;
+  background: #0284c7;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* On hover left bar appears */
+.sidebar ul li a:not(.active):hover::before {
+  width: 4px;
+}
+
+/* Optional slight move right on hover */
+.sidebar ul li a:not(.active):hover {
+  padding-left: 24px;
+}
+
+/* Optional icon color change */
+.sidebar ul li a:not(.active):hover i {
+  color: #0f172a;
+  transition: color 0.3s ease;
+}
+
+.payment-details-container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  color: #333;
+}
+
+.payment-details-container h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem;
+  color: #004e89;
+  border-bottom: 3px solid #004e89;
+  padding-bottom: 10px;
+}
+
+/* Summary Section */
+.payment-summary {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.summary-item {
+  flex: 1;
+  padding: 20px;
+  margin: 0 10px;
+  background: #f4f6f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.summary-item h4 {
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.summary-item p {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.summary-item.due p {
+  color: #d93025;
+}
+
+/* Personal & Room Info */
+.personal-room-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px 30px;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+
+/* Payment Table */
+.payment-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+.payment-history-table th,
+.payment-history-table td {
+  padding: 12px 15px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+.payment-history-table th {
+  background: #004e89;
+  color: #fff;
+  font-weight: 600;
+}
+
+.payment-history-table tbody tr:nth-child(odd) {
+  background: #f9f9f9;
+}
+
+.payment-history-table a {
+  color: #004e89;
+  text-decoration: underline;
+}
+
+/* Status badges */
+.paid {
+  color: green;
+  font-weight: bold;
+}
+
+.due {
+  color: red;
+  font-weight: bold;
+}
+
+/* Buttons */
+.payment-actions {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.pay-now-btn, .download-summary-btn {
+  padding: 12px 25px;
+  margin: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pay-now-btn {
+  background: #004e89;
+  color: white;
+}
+
+.download-summary-btn {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.pay-now-btn:hover {
+  background: #003b6f;
+}
+
+.download-summary-btn:hover {
+  background: #ccc;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .payment-summary {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .personal-room-info {
+    grid-template-columns: 1fr;
+  }
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar Start -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2 class="heading">Hostel Manager</h2>
+      <!-- <i class="fa-solid fa-bars" onclick="toggleSidebar()"></i> -->
+    </div>
+
+    <ul class="menu">
+      <li><a href="studenthosteldashboard.html"  ><i class="fa-solid fa-house-chimney"></i><span>Hostel Dashboard</span></a></li>
+    </ul>
+
+    <h3 class="feature-heading">Features</h3>
+    <ul class="menu">
+      <li><a href="myprofile.html"><i class="fa-solid fa-address-card"></i><span>View My Details</span></a></li>
+      <li><a href="bookhostel.html"><i class="fa-solid fa-bed"></i><span>Book Hostel</span></a></li>
+      <li><a href="myroomdetails.html"><i class="fa-solid fa-door-open"></i><span>My Room Details</span></a></li>
+      <li><a href="paymentdetails.html" class="active"><i class="fa-solid fa-credit-card"></i><span>Payment Details</span></a></li>
+    </ul>
+  </div>
+  <!-- Sidebar End -->
+
+  <!-- Main Area (Topbar + Content) -->
+  <div class="main-area">
+    <!-- Topbar Start -->
+    <div class="topbar">
+      <div class="user-info">
+        <div class="details">
+          <h4>Varun</h4>
+          <span>Student</span>
+        </div>
+        <img src="img/images.jpg" alt="Profile">
+      </div>
+    </div>
+    <!-- Topbar End -->
+
+    <!-- Main Content Start -->
+    <div class="main-content">
+      <div class="payment-details-container">
+        <h2>Payment & Fee Details</h2>
+      
+        <!-- Summary Section -->
+        <div class="payment-summary">
+          <div class="summary-item">
+            <h4>Total Fees</h4>
+            <p>₹ 22,500</p>
+          </div>
+          <div class="summary-item">
+            <h4>Total Paid</h4>
+            <p>₹ 15,000</p>
+          </div>
+          <div class="summary-item due">
+            <h4>Due Amount</h4>
+            <p>₹ 7,500</p>
+          </div>
+        </div>
+      
+        <!-- Personal and Room Details -->
+        <div class="personal-room-info">
+          <div><strong>Student Name:</strong> Test T. Student</div>
+          <div><strong>Registration Number:</strong> CA016</div>
+          <div><strong>Room Number:</strong> 102-B (Single Seater)</div>
+          <div><strong>Duration:</strong> 3 Months</div>
+          <div><strong>Seater:</strong> 1 Seater</div>
+          <div><strong>Plan:</strong> Vegetarian Food Plan</div>
+        </div>
+      
+        <!-- Payment History Table -->
+        <h3>Payment History</h3>
+        <table class="payment-history-table">
+          <thead>
+            <tr>
+              <th>Transaction ID</th>
+              <th>Amount</th>
+              <th>Payment Date</th>
+              <th>Payment Mode</th>
+              <th>Status</th>
+              <th>Receipt</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#TXN12345</td>
+              <td>₹7,500</td>
+              <td>2023-12-01</td>
+              <td>UPI</td>
+              <td><span class="paid">Paid</span></td>
+              <td><a href="#">Download</a></td>
+            </tr>
+            <tr>
+              <td>#TXN12346</td>
+              <td>₹7,500</td>
+              <td>2024-01-01</td>
+              <td>Credit Card</td>
+              <td><span class="paid">Paid</span></td>
+              <td><a href="#">Download</a></td>
+            </tr>
+            <tr>
+              <td>#TXN12347</td>
+              <td>₹7,500</td>
+              <td>2024-02-01</td>
+              <td>Pending</td>
+              <td><span class="due">Due</span></td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+      
+        <!-- Actions -->
+        <div class="payment-actions">
+          <button type="button" class="pay-now-btn">Pay Now</button>
+          <button type="button" class="download-summary-btn">Download Full Summary</button>
+        </div>
+      </div>
+      
+    </div>
+    <!-- Main Content End -->
+  </div>
+
+  <!-- JavaScript for Sidebar -->
+  <script>
+    // function toggleSidebar() {
+    //   const sidebar = document.getElementById('sidebar');
+    //   sidebar.classList.toggle('collapsed');
+    // }
+  </script>
+
+</body>
+</html>
